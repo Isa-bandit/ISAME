@@ -4,7 +4,11 @@ const AppContext = createContext()
 const ADMIN_SECRET = 'final wish'
 
 export function AppProvider({ children }) {
-  const [products, setProducts] = useState([])
+  const [products, setProducts] = useState(() => {
+    const stored = localStorage.getItem('nikeProducts')
+    return stored ? JSON.parse(stored) : []
+  })
+  const [loadingProducts] = useState(false)
   const [user, setUser] = useState(
     () => JSON.parse(localStorage.getItem('nikeUser')) || null
   )
@@ -12,11 +16,6 @@ export function AppProvider({ children }) {
   const [isAdmin, setIsAdmin] = useState(
     () => localStorage.getItem('nikeAdmin') === 'true'
   )
-
-  useEffect(() => {
-    const stored = localStorage.getItem('nikeProducts')
-    if (stored) setProducts(JSON.parse(stored))
-  }, [])
 
   useEffect(() => {
     if (user) {
@@ -96,13 +95,13 @@ export function AppProvider({ children }) {
     return { success: true }
   }
 
-const logout = () => {
-  setUser(null)
-  setFavorites([])
-  setIsAdmin(false)                   
-  localStorage.removeItem('nikeUser')
-  localStorage.removeItem('nikeAdmin')
-}
+  const logout = () => {
+    setUser(null)
+    setFavorites([])
+    setIsAdmin(false)
+    localStorage.removeItem('nikeUser')
+    localStorage.removeItem('nikeAdmin')
+  }
 
   const visibleProducts = isAdmin
     ? products
@@ -126,6 +125,7 @@ const logout = () => {
       isAdmin,
       enterAdminMode,
       exitAdminMode,
+      loadingProducts,
     }}>
       {children}
     </AppContext.Provider>
