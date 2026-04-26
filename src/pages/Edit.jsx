@@ -7,7 +7,7 @@ const COLORS = ['#f5f5f5', '#fff3e0', '#e8f5e9', '#fce4ec', '#e3f2fd']
 
 export default function Edit() {
   const { id } = useParams()
-  const { products, updateProduct } = useApp()
+  const { products, updateProduct,loadingProducts } = useApp()
   const navigate = useNavigate()
 
   const [form, setForm] = useState({ title: '', description: '', price: '', category: '', color: '#f5f5f5' })
@@ -16,12 +16,13 @@ export default function Edit() {
   const [success, setSuccess] = useState(false)
   const [notFound, setNotFound] = useState(false)
 
-  useEffect(() => {
-    const item = products.find(p => String(p.id) === String(id))
-    if (item) setForm(item)
-    else setNotFound(true)
-  }, [id, products])
 
+useEffect(() => {
+  if (loadingProducts) return  
+  const item = products.find(p => String(p.id) === String(id))
+  if (item) setForm(item)
+  else setNotFound(true)
+}, [id, products, loadingProducts])
   if (notFound) {
     return (
       <div style={s.notFound}>
