@@ -3,10 +3,20 @@ import { useApp } from '../components/AppContext'
 
 export default function Details() {
   const { id } = useParams()
-  const { visibleProducts, deleteProduct, user, isAdmin, toggleFavorite, isFavorite } = useApp()
+  const { visibleProducts, deleteProduct, user, isAdmin, toggleFavorite, isFavorite, loadingProducts } = useApp()
   const navigate = useNavigate()
 
   const product = visibleProducts.find(p => String(p.id) === String(id))
+
+  if (loadingProducts) {
+  return (
+    <div style={s.notFound}>
+      <div style={{ width: 32, height: 32, border: '3px solid #f0f0f0', borderTop: '3px solid #111', borderRadius: '50%', animation: 'spin 0.8s linear infinite', marginBottom: 12 }} />
+      <p style={{ color: '#757575' }}>Loading…</p>
+    </div>
+  )
+}
+
 
   if (!product) {
     return (
